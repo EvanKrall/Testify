@@ -11,7 +11,30 @@ import sys
 from test_runner import TestRunner
 
 class TestRunnerJSONReplay(TestRunner):
-    """A fake test runner that loads a one-dict-per-line JSON file and sends each dict to the test reporters."""
+    """A fake test runner that loads a one-dict-per-line JSON file and sends each dict to the test reporters.
+    Each line of input should be a valid JSON dictionary, with the following structure (with no newlines):
+    {
+        "start_time": 1333582549.8860991,
+        "runner_id": "junit_search_0:6168",
+        "failure": false,
+        "run_time": 364.08201694488525,
+        "previous_run": null,
+        "success": 1,
+        "exception_info": null,
+        "end_time": 1333582913.968116,
+        "method": {
+            "module": "junit",
+            "class": "ClassName",
+            "name": "method_name"
+        }
+    }
+
+    previous_run may either be null or a dictionary of the same format, if the test was run twice.
+    exception_info may either be null or an array of strings.
+    runner_id is a unique identifier for the process that ran the tests, e.g. Buildbot builder name/build number.
+
+    Depending on the reporting plugins you use, other fields may be required.
+    """
     def __init__(self, *args, **kwargs):
         self.replay_json = kwargs.pop('replay_json')
         self.replay_json_inline = kwargs.pop('replay_json_inline')
